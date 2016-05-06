@@ -11,7 +11,6 @@ Uses Docker's official Drupal Dockerfile minus downloading the latest version of
 ## Usage ##
 Add the Dockerfile and docker-compose.yml to a Drupal site root, then start compose:
 ```
-#!bash
 docker-compose up
 ```
 
