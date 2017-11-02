@@ -1,6 +1,11 @@
 FROM php:7.1-apache
 
-# Enable apache mods
+# change the docroot
+ENV APACHE_DOCUMENT_ROOT /var/www/html/web
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# enable apache mods
 RUN a2enmod rewrite
 
 # install the PHP extensions we need
@@ -39,5 +44,5 @@ RUN yes | pecl install xdebug \
 
 WORKDIR /var/www/html
 
-# Fix them file permissions
+# fix them file permissions
 RUN usermod -u 1000 www-data
