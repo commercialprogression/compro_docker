@@ -14,16 +14,11 @@ RUN set -ex \
 		libjpeg62-turbo-dev \
 		libpng-dev \
 		libpq-dev \
-		libc-client-dev \
-		libkrb5-dev \
 	' \
 	&& apt-get update && apt-get install -y --no-install-recommends $buildDeps && rm -rf /var/lib/apt/lists/* \
 	&& docker-php-ext-configure gd \
 		--with-jpeg-dir=/usr \
 		--with-png-dir=/usr \
-    && docker-php-ext-configure imap \
-        --with-kerberos \
-        --with-imap-ssl \
 	&& docker-php-ext-install -j "$(nproc)" gd mbstring opcache pdo pdo_mysql pdo_pgsql zip imap \
 	&& apt-mark manual \
 		libjpeg62-turbo \
