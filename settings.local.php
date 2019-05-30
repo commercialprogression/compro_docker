@@ -2,130 +2,73 @@
 
 /**
  * @file
- * Local development override configuration feature.
- *
- * To activate this feature, copy and rename it such that its path plus
- * filename is 'sites/default/settings.local.php'. Then, go to the bottom of
- * 'sites/default/settings.php' and uncomment the commented lines that mention
- * 'settings.local.php'.
- *
- * If you are using a site name in the path, such as 'sites/example.com', copy
- * this file to 'sites/example.com/settings.local.php', and uncomment the lines
- * at the bottom of 'sites/example.com/settings.php'.
+ * Drupal site-specific configuration file.
  */
 
 /**
- * Assertions.
- *
- * The Drupal project primarily uses runtime assertions to enforce the
- * expectations of the API by failing when incorrect calls are made by code
- * under development.
- *
- * @see http://php.net/assert
- * @see https://www.drupal.org/node/2492225
- *
- * If you are using PHP 7.0 it is strongly recommended that you set
- * zend.assertions=1 in the PHP.ini file (It cannot be changed from .htaccess
- * or runtime) on development machines and to 0 in production.
- *
- * @see https://wiki.php.net/rfc/expectations
+ * Local error reporting.
  */
-assert_options(ASSERT_ACTIVE, TRUE);
-\Drupal\Component\Assertion\Handle::register();
+error_reporting(E_ALL);
+ini_set('display_errors', TRUE);
+ini_set('display_startup_errors', TRUE);
+ini_set('xdebug.max_nesting_level', 256);
 
 /**
- * Enable local development services.
+ * Local other settings.
  */
-$settings['container_yamls'][] = DRUPAL_ROOT . '/sites/development.services.yml';
+ini_set('upload_max_filesize', '100M');
+ini_set('post_max_size', '100M');
+$conf['block_cache'] = 0;
+$conf['cache'] = 0;
+$conf['preprocess_css'] = 0;
+$conf['preprocess_js'] = 0;
+$conf['securepages_enable'] = FALSE;
+$conf['mandrill_api_key'] = FALSE;
 
 /**
- * Show all error messages, with backtrace information.
- *
- * In case the error level could not be fetched from the database, as for
- * example the database connection failed, we rely only on this value.
+ * Databases.
  */
-$config['system.logging']['error_level'] = 'verbose';
-
-/**
- * Disable CSS and JS aggregation.
- */
-$config['system.performance']['css']['preprocess'] = FALSE;
-$config['system.performance']['js']['preprocess'] = FALSE;
-
-/**
- * Disable the render cache (this includes the page cache).
- *
- * Note: you should test with the render cache enabled, to ensure the correct
- * cacheability metadata is present. However, in the early stages of
- * development, you may want to disable it.
- *
- * This setting disables the render cache by using the Null cache back-end
- * defined by the development.services.yml file above.
- *
- * Do not use this setting until after the site is installed.
- */
-$settings['cache']['bins']['render'] = 'cache.backend.null';
-
-/**
- * Disable caching for migrations.
- *
- * Uncomment the code below to only store migrations in memory and not in the
- * database. This makes it easier to develop custom migrations.
- */
-# $settings['cache']['bins']['discovery_migration'] = 'cache.backend.memory';
-
-/**
- * Disable Dynamic Page Cache.
- *
- * Note: you should test with Dynamic Page Cache enabled, to ensure the correct
- * cacheability metadata is present (and hence the expected behavior). However,
- * in the early stages of development, you may want to disable it.
- */
-$settings['cache']['bins']['dynamic_page_cache'] = 'cache.backend.null';
-$settings['cache']['bins']['page'] = 'cache.backend.null';
-
-/**
- * Allow test modules and themes to be installed.
- *
- * Drupal ignores test modules and themes by default for performance reasons.
- * During development it can be useful to install test extensions for debugging
- * purposes.
- */
-# $settings['extension_discovery_scan_tests'] = TRUE;
-
-/**
- * Enable access to rebuild.php.
- *
- * This setting can be enabled to allow Drupal's php and database cached
- * storage to be cleared via the rebuild.php page. Access to this page can also
- * be gained by generating a query string from rebuild_token_calculator.sh and
- * using these parameters in a request to rebuild.php.
- */
-$settings['rebuild_access'] = TRUE;
-
-/**
- * Skip file system permissions hardening.
- *
- * The system module will periodically check the permissions of your site's
- * site directory to ensure that it is not writable by the website user. For
- * sites that are managed with a version control system, this can cause problems
- * when files in that directory such as settings.php are updated, because the
- * user pulling in the changes won't have permissions to modify files in the
- * directory.
- */
-$settings['skip_permissions_hardening'] = TRUE;
-
-// Database stuffs
-$databases['default']['default'] = array (
-  'database' => 'drupal',
-  'username' => 'root',
-  'password' => 'root',
-  'prefix' => '',
-  'host' => 'mysql',
-  'port' => '3306',
-  'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
-  'driver' => 'mysql',
+$databases = array (
+  'default' => 
+  array (
+    'default' => 
+    array (
+      'database' => 'drupal',
+      'username' => 'root',
+      'password' => 'root',
+      'host' => 'mysql',
+      'port' => '',
+      'driver' => 'mysql',
+      'prefix' => '',
+    ),
+  ),
 );
 
-// Seasoning
-$settings['hash_salt'] = 'TyCpFl_-3Q6t85eMeOxOWskyHtRWkUR1AClMsrZ4jKn4sVVKMv37BfAlGh3mSotWnnu7XLWD-A';
+$settings['hash_salt'] = 'V8xV4rh70SN0';
+
+$config['search_api.server.solr']['backend_config']['connector_config']['core'] = 'd8';
+$config['search_api.server.solr']['backend_config']['connector_config']['path'] = '/solr';
+$config['search_api.server.solr']['backend_config']['connector_config']['host'] = 'solr';
+$config['search_api.server.solr']['backend_config']['connector_config']['port'] = '8983';
+
+/**
+ * General configs.
+ */
+$conf['404_fast_html'] = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>404 Not Found</title></head><body><h1>Not Found</h1><p>The requested URL "@path" was not found on this server.</p></body></html>';
+$conf['404_fast_paths'] = '/\.(?:txt|png|gif|jpe?g|css|js|ico|swf|flv|cgi|bat|pl|dll|exe|asp)$/i';
+$conf['404_fast_paths_exclude'] = '/\/(?:styles)\//';
+$conf['theme_debug'] = '1';
+$drupal_hash_salt = 'kczJRAl6ByVYlbSVuiOTvt3zef3q6llP0nXiXQnGJCg';
+$update_free_access = FALSE;
+ini_set('session.cookie_lifetime', 2000000);
+ini_set('session.gc_divisor', 100);
+ini_set('session.gc_maxlifetime', 200000);
+ini_set('session.gc_probability', 1);
+
+$settings['trusted_host_patterns'] = [
+  'localhost',
+];
+
+$settings['file_private_path'] = '../private';
+
+$settings['container_yamls'][] = DRUPAL_ROOT . '/sites/default/development.services.yml';
