@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
   mysql:
@@ -26,3 +26,15 @@ services:
     ports:
       - "1025:1025"
       - "8025:8025"
+
+  solr:
+    image: solr:6.6-alpine
+    ports:
+      - 8983
+    volumes:
+      - ./solr-conf/conf:/solr-conf/conf
+    entrypoint:
+      - docker-entrypoint.sh
+      - solr-precreate
+      - d8
+      - /solr-conf

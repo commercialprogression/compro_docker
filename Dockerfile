@@ -1,29 +1,32 @@
-FROM php:7.1-apache
+FROM php:7.3-apache
 
-# change the docroot
+# Uncomment this section if the site root is in the web directory.
 ENV APACHE_DOCUMENT_ROOT /var/www/html/web
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# enable apache mods
+# Enable apache mods
 RUN a2enmod rewrite
 
 # install the PHP extensions we need
 RUN set -ex \
 	&& buildDeps=' \
 		libjpeg62-turbo-dev \
-		libpng12-dev \
+		libpng-dev \
 		libpq-dev \
+		libzip-dev \
+		zip \
+		git \
 	' \
 	&& apt-get update && apt-get install -y --no-install-recommends $buildDeps && rm -rf /var/lib/apt/lists/* \
 	&& docker-php-ext-configure gd \
 		--with-jpeg-dir=/usr \
 		--with-png-dir=/usr \
+		--with-libzip \
 	&& docker-php-ext-install -j "$(nproc)" gd mbstring opcache pdo pdo_mysql pdo_pgsql zip \
 	&& apt-mark manual \
 		libjpeg62-turbo \
-		libpq5 \
-	&& apt-get purge -y --auto-remove $buildDeps
+		libpq5
 
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
@@ -44,5 +47,5 @@ RUN yes | pecl install xdebug \
 
 WORKDIR /var/www/html
 
-# fix them file permissions
+# Fix them file permissions
 RUN usermod -u 1000 www-data
