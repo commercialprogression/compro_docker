@@ -15,8 +15,27 @@ RUN set -ex \
 		libpng-dev \
 		libpq-dev \
 		libzip-dev \
+		libx11-xcb-dev \
+		libxcomposite1 \
+		libxcursor1 \
+		libxdamage1 \
+		libxext6 \
+		libxi6 \
+		libxtst6 \
+		libnss3 \
+		libcups2 \
+		libxss1 \
+		libxrandr2 \
+		libasound2 \
+		libatk1.0-0 \
+		libatk-bridge2.0-0 \
+		libpango-1.0-0 \
+		libpangocairo-1.0-0 \
+		libgtk-3-0 \
 		zip \
 		git \
+		openssh-server \
+		mariadb-server \
 	' \
 	&& apt-get update && apt-get install -y --no-install-recommends $buildDeps && rm -rf /var/lib/apt/lists/* \
 	&& docker-php-ext-configure gd \
@@ -27,6 +46,15 @@ RUN set -ex \
 	&& apt-mark manual \
 		libjpeg62-turbo \
 		libpq5
+
+#
+# Install Node (with NPM) via package manager for Debian
+#
+# https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN apt-get update \
+ && apt-get install -y \
+ nodejs
 
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
