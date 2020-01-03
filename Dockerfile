@@ -1,12 +1,12 @@
-FROM php:7.3-apache
+FROM php:7.2
 
 # Uncomment this section if the site root is in the web directory.
-ENV APACHE_DOCUMENT_ROOT /var/www/html/web
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+#ENV APACHE_DOCUMENT_ROOT /var/www/html/web
+#RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+#RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 # Enable apache mods
-RUN a2enmod rewrite
+#RUN a2enmod rewrite
 
 # install the PHP extensions we need
 RUN set -ex \
@@ -36,12 +36,14 @@ RUN set -ex \
 		git \
 		openssh-server \
 		mariadb-server \
+		unzip \
 	' \
 	&& apt-get update && apt-get install -y --no-install-recommends $buildDeps && rm -rf /var/lib/apt/lists/* \
 	&& docker-php-ext-configure gd \
 		--with-jpeg-dir=/usr \
 		--with-png-dir=/usr \
-		--with-libzip \
+	&& docker-php-ext-configure zip \
+    		--with-libzip \
 	&& docker-php-ext-install -j "$(nproc)" gd mbstring opcache pdo pdo_mysql pdo_pgsql zip \
 	&& apt-mark manual \
 		libjpeg62-turbo \
