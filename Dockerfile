@@ -1,4 +1,4 @@
-FROM php:7.2
+FROM php:7.4
 
 # Uncomment this section if the site root is in the web directory.
 #ENV APACHE_DOCUMENT_ROOT /var/www/html/web
@@ -14,12 +14,21 @@ RUN set -ex \
 		libjpeg62-turbo-dev \
 		libpng-dev \
 		libpq-dev \
+        libfontconfig1 \
+        libxrender1 \
+        fontconfig \
+        libxext6 \
+        xfonts-75dpi \
+        xfonts-base \
+        libwebp-dev \
+        libwebp6 \
+        webp \
+        libfreetype6-dev \
 		libzip-dev \
 		libx11-xcb-dev \
 		libxcomposite1 \
 		libxcursor1 \
 		libxdamage1 \
-		libxext6 \
 		libxi6 \
 		libxtst6 \
 		libnss3 \
@@ -40,11 +49,10 @@ RUN set -ex \
 	' \
 	&& apt-get update && apt-get install -y --no-install-recommends $buildDeps && rm -rf /var/lib/apt/lists/* \
 	&& docker-php-ext-configure gd \
-		--with-jpeg-dir=/usr \
-		--with-png-dir=/usr \
-	&& docker-php-ext-configure zip \
-    		--with-libzip \
-	&& docker-php-ext-install -j "$(nproc)" gd mbstring opcache pdo pdo_mysql pdo_pgsql zip \
+        --with-jpeg=/usr \
+        --with-webp=/usr \
+        --with-freetype=/usr \
+	&& docker-php-ext-install -j "$(nproc)" gd pdo_mysql zip bcmath \
 	&& apt-mark manual \
 		libjpeg62-turbo \
 		libpq5
