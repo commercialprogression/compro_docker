@@ -1,4 +1,4 @@
-FROM php:7.4
+FROM php:7.4-apache
 
 # Uncomment this section if the site root is in the web directory.
 #ENV APACHE_DOCUMENT_ROOT /var/www/html/web
@@ -6,7 +6,7 @@ FROM php:7.4
 #RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 # Enable apache mods
-#RUN a2enmod rewrite
+RUN a2enmod rewrite
 
 # install the PHP extensions we need
 RUN set -ex \
@@ -63,8 +63,7 @@ RUN set -ex \
 # https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
 RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get update \
- && apt-get install -y \
- nodejs
+ && apt-get install -y nodejs
 
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
